@@ -203,8 +203,7 @@ task WMGame "Web & Mobile Game" {
       depends WMGame.tMobF
       depends WMGame.tback
       depends WMGame.tCloudB
-      minstart 2026-05-15
-      actual:minstart 2026-05-15
+      start 2026-05-15
       }
 
     
