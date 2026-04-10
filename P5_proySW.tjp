@@ -147,13 +147,53 @@ task WMGame "Web & Mobile Game" {
     }    
   }
 
+  task tMobF "Mobile Front End" {
+    purge chargeset
+    chargeset mFront
+    responsible dev3
+    depends WMGame.tback.tBEd
+    task tMGUId "Mobile GUI Design" {
+      effort 6d
+      allocate dev3
+    }
+    task tMFEc "Mobile Front End Construction" {
+      effort 10d
+      allocate dev2, dev3
+      depends WMGame.tMobF.tMGUId
+    }
+    task tMFEt "Mobile Front End Test" {
+      effort 4d
+      allocate dev1
+      depends WMGame.tMobF.tMFEc
+    }    
+  }
+
+  task tCloudB "Cloud Deployment Support" {
+    purge chargeset
+    chargeset back
+    responsible dev1
+    task tCloudEval "Cloud Provider Evaluation" {
+      effort 4d
+      allocate boss, dev1
+      depends WMGame.tgdesign
+    }
+    task tCloudDeploy "Backend Cloud Deployment" {
+      effort 5d
+      allocate dev1
+      depends WMGame.tCloudB.tCloudEval
+      depends WMGame.tback.tbackDev
+    }
+  }
+
   task ttest "Acceptance tests" {
       effort 10d
       allocate boss
       allocate dev2
       actual:effort 20d
       depends WMGame.twebF
+      depends WMGame.tMobF
       depends WMGame.tback
+      depends WMGame.tCloudB
       }
 
     
