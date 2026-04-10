@@ -5,7 +5,7 @@
  * some elements of it
  */
 
-project pSix "Web Game"  2025-12-15 +5m {
+project pSix "Web Game"  2025-12-15 +6m {
   # Set the default time zone for the project. If not specified, UTC
   # is used.
   timezone "Europe/Paris"
@@ -19,7 +19,7 @@ project pSix "Web Game"  2025-12-15 +5m {
   # the project reports. If not specified, the current day will be
   # used, but this will likely be outside of the project range, so it
   # can't be seen in the reports.
-  now 2026-02-25-13:00
+  now 2026-04-10-13:00
   # The currency for all money values is the US Dollar.
   currency "EUR"
 
@@ -67,6 +67,10 @@ resource dev2 "Samantha Müller" {
 }
 resource dev3 "Peter Green" {
   email "kkk@unizar.es"
+}
+resource juanma "Juanma" {
+  email "901231@unizar.es"
+  limits { dailymax 4h }
 }
 
 # Now we specify the work packages. The whole project is described as
@@ -174,14 +178,19 @@ task WMGame "Web & Mobile Game" {
     responsible dev1
     task tCloudEval "Cloud Provider Evaluation" {
       effort 4d
-      allocate boss, dev1
+      allocate boss, dev1, juanma
       depends WMGame.tgdesign
     }
     task tCloudDeploy "Backend Cloud Deployment" {
       effort 5d
-      allocate dev1
+      allocate dev1, juanma
       depends WMGame.tCloudB.tCloudEval
       depends WMGame.tback.tbackDev
+      journalentry 2026-04-10 "Cloud deployment started" {
+        author juanma
+        alert green
+        summary "Comenzando la evaluacion e inicialización del entorno cloud de acuerdo a las fechas planificadas."
+      }
     }
   }
 
@@ -194,6 +203,7 @@ task WMGame "Web & Mobile Game" {
       depends WMGame.tMobF
       depends WMGame.tback
       depends WMGame.tCloudB
+      minstart 2026-05-15
       }
 
     
@@ -263,6 +273,11 @@ textreport frame "" {
     formats html
     center '<[report id="overview"]>'
   }
+
+  textreport initial_plan_rep "Initial Plan" {
+    formats html
+    center '<[report id="initial_plan"]>'
+  }
   
   textreport "Status" {
     formats html
@@ -303,6 +318,20 @@ taskreport overview "" {
           revenue, chart { ${TaskTip} }
   # For this report we like to have the abbreviated weekday in front
   # of the date. %a is the tag for this.
+  timeformat "%a %Y-%m-%d"
+  loadunit days
+  hideresource @all
+  balance cost rev
+  caption 'All effort values are in man days.'
+}
+
+# A traditional Gantt chart with the initial project overview.
+taskreport initial_plan "" {
+  scenarios plan
+  headline "Initial Project Plan"
+  columns bsi { title 'WBS' },
+          name, start, end, effort, cost,
+          revenue, chart { ${TaskTip} }
   timeformat "%a %Y-%m-%d"
   loadunit days
   hideresource @all
